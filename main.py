@@ -16,14 +16,15 @@ import os
 import struct
 import zlib
 
-W, H = 1024, 1536
+W, H = 1024, 1024   # the competition's cap is 1024 by 1024
 M = 22
 COLS_W = W - 2 * M
-LEAD_Y, LEAD_H, LEAD_GAP = 188, 150, 6
-MAJOR_Y, MAJOR_H, MAJOR_GAP = 506, 100, 6
-BRIEF_Y, BRIEF_BOTTOM = 936, 1330
+LEAD_Y, LEAD_H, LEAD_GAP = 162, 168, 6
+MAJOR_Y, MAJOR_H, MAJOR_GAP = 338, 90, 6
+NCOL = 4                      # brief columns across the page
+BRIEF_Y, BRIEF_BOTTOM = 590, 804
 FOOT_Y, FOOT_PAD = 1344, 10
-SEC_HEAD, SEC_PITCH, SEC_GAP = 26, 24, 6
+SEC_HEAD, SEC_PITCH, SEC_GAP = 19, 14, 3
 
 PAPER = (243, 239, 228)
 PANEL = (230, 223, 208)
@@ -31,6 +32,7 @@ INK = (26, 24, 22)
 RED = (168, 32, 28)
 BLUE = (28, 62, 120)
 GREEN = (24, 92, 60)
+PLUM = (96, 40, 96)          # a fourth heading colour so no two columns match
 AMBER = (168, 106, 12)
 GREY = (108, 103, 94)
 
@@ -471,11 +473,11 @@ SECTIONS = [
 N_STORIES = len(LEADS) + len(MAJORS) + sum(len(x[2]) for x in SECTIONS)
 
 FOOT = [
-    ("SOURCES", "WIKIPEDIA CURRENT EVENTS, REUTERS, AP, BBC, PBS, NPR, CNBC, "
-                "UN NEWS, NASA, PEW, HUMAN RIGHTS WATCH", GREY),
+    ("SOURCES", "WIKIPEDIA, REUTERS, AP, BBC, PBS, NPR, CNBC, UN NEWS, NASA, "
+                "PEW, HUMAN RIGHTS WATCH", GREY),
     ("DATE CHECK", "EVERY ITEM WAS FIRST REPORTED ON 18 NOVEMBER 2026 IN SOME "
-                   "TIME ZONE. LEFT OUT ON PURPOSE: ITEMS DATED 17 OR 19 NOVEMBER, "
-                   "AND ANY ITEM WITH NO DAY AT ALL.", GREY),
+                   "TIME ZONE. LEFT OUT: ITEMS DATED 17 OR 19 NOVEMBER, AND ANY "
+                   "ITEM WITH NO DAY.", GREY),
     ("SCOPE", f"{N_STORIES} STORIES, SEVEN SECTIONS, ONE PAGE: {len(LEADS)} LEADS, "
               f"{len(MAJORS)} DRAWN STORIES, {N_STORIES - len(LEADS) - len(MAJORS)} BRIEFS.",
      GREY),
@@ -501,41 +503,57 @@ def check_glyphs():
         assert not bad, (s, bad)
 
 
+LEAD_W = (COLS_W - 14) // 2
+
+
 def lead_block(c, x, y, lead):
+    """Half a row: a tag, an icon in the corner, a headline over two columns."""
     tag, head, colr, icon, deck = lead
-    c.rect(x, y, COLS_W, LEAD_H, PANEL)
-    c.rect(x, y, COLS_W, 6, colr)
-    icon(c, x + 14, y + 34, 84 / 96.0)
-    tx = x + 116
-    cols = cols_for(COLS_W - 116 - 14, 5)
-    c.text(tag, tx, y + 16, 2, colr)
-    n = c.lines(head, tx, y + 32, cols, 5, INK)
-    assert n <= 2, (n, head)
-    dcols = cols_for(COLS_W - 28, 3)
-    dn = c.lines(deck, x + 14, y + 32 + 2 * line_h(5) + 6, dcols, 3, GREY)
-    assert dn == 1, (dn, deck)
-    assert y + 32 + 2 * line_h(5) + 6 + line_h(3) <= y + LEAD_H
+    w = LEAD_W
+    c.rect(x, y, w, LEAD_H, PANEL)
+    c.rect(x, y, w, 6, colr)
+    icon(c, x + 12, y + 22, 76 / 96.0)
+    tx = x + 100
+    cols = cols_for(w - 100 - 12, 4)
+    c.text(tag, tx, y + 12, 2, colr)
+    n = c.lines(head, tx, y + 26, cols, 4, INK)
+    assert n <= 3, (n, head)
+    dcols = cols_for(w - 24, 2)
+    dn = c.lines(deck, x + 12, y + 26 + n * line_h(4) + 6, dcols, 2, GREY)
+    assert dn <= 2, (dn, deck)
+    assert y + 26 + n * line_h(4) + 6 + dn * line_h(2) <= y + LEAD_H, (head, n, dn)
+
+
+MAJOR_W = (COLS_W - 3 * 8) // 4
 
 
 def major_cell(c, x, y, major):
+    """A quarter row: coloured spine, tag, icon, headline over three of four rows."""
     tag, head, colr, icon = major
-    c.rect(x, y, 483, MAJOR_H, PANEL)
-    c.rect(x, y, 5, MAJOR_H, colr)
-    icon(c, x + 12, y + 30, 40 / 96.0)
-    tx = x + 58
-    cols = cols_for(483 - 58 - 10, 4)
-    c.text(tag, tx, y + 12, 2, colr)
-    n = c.lines(head, tx, y + 30, cols, 4, INK)
-    assert n <= 2, (n, head)
-    assert y + 30 + 2 * line_h(4) <= y + MAJOR_H
+    w = MAJOR_W
+    c.rect(x, y, w, MAJOR_H, PANEL)
+    c.rect(x, y, 4, MAJOR_H, colr)
+    icon(c, x + 8, y + 13, 22 / 96.0)
+    tx = x + 36
+    cols = cols_for(w - 36 - 8, 2)
+    c.text(tag, tx, y + 9, 2, colr)
+    ls = wrap(head, cols)
+    n = len(ls)
+    # centre the headline in what the tag and icon leave, so two-line and three-line
+    # cells sit alike instead of hugging the top
+    dy = max(0, (MAJOR_H - 6 - 29 - n * line_h(2)) // 2)
+    for i, ln in enumerate(ls):
+        c.text(ln, tx, y + 29 + dy + i * line_h(2), 2, INK)
+    assert n <= 5, (n, head)
+    assert y + 29 + n * line_h(2) <= y + MAJOR_H, (head, n)
 
 
 def plan_columns(blocks):
     """Split region blocks over three columns, keeping each block whole."""
     target = BRIEF_BOTTOM - BRIEF_Y
     best, best_key = None, None
-    for assign in itertools.product(range(3), repeat=len(blocks)):
-        totals = [0, 0, 0]
+    for assign in itertools.product(range(NCOL), repeat=len(blocks)):
+        totals = [0] * NCOL
         for b, a in zip(blocks, assign):
             totals[a] += b[2]
         if max(totals) > target:
@@ -545,7 +563,7 @@ def plan_columns(blocks):
             best_key, best = key, assign
     assert best is not None, "briefs do not fit: " + str(
         [b[2] for b in blocks]) + " target " + str(target)
-    cols = [[] for _ in range(3)]
+    cols = [[] for _ in range(NCOL)]
     for b, a in zip(blocks, assign_cols(best, blocks)):
         cols[a].append(b)
     for col in cols:
@@ -559,72 +577,77 @@ def assign_cols(assign, blocks):
 
 def build():
     check_glyphs()
-    gap = 12
-    cw = (COLS_W - 2 * gap) // 3
-    bcols = cols_for(cw - 12, 3)
+    gap = 10
+    cw = (COLS_W - (NCOL - 1) * gap) // NCOL
+    bcols = cols_for(cw - 18, 2)
     for _name, _c, items in SECTIONS:
         for it in items:
             assert len(it) <= bcols, ("brief too long for one line", it, len(it), bcols)
 
     blocks = [(name, colr, SEC_HEAD + SEC_PITCH * len(items) + SEC_GAP, i, items)
               for i, (name, colr, items) in enumerate(SECTIONS)]
-    plan = plan_columns(blocks)
 
     c = Canvas(W, H, PAPER)
     c.rect(0, 0, W, 9, INK)
 
-    c.text_c(MASTHEAD[0], 28, 3, GREY)
-    c.text_c(MASTHEAD[1], 56, 9, INK)
-    c.rect(M, 128, COLS_W, 3, INK)
-    c.text_c(MASTHEAD[2], 140, 4, RED)
-    c.rect(M, 176, COLS_W, 1, GREY)
+    c.text_c(MASTHEAD[0], 16, 3, GREY)
+    c.text_c(MASTHEAD[1], 34, 10, INK)
+    c.rect(M, 116, COLS_W, 3, INK)
+    c.text_c(MASTHEAD[2], 126, 3, RED)
+    c.rect(M, 154, COLS_W, 1, GREY)
 
     for i, lead in enumerate(LEADS):
-        lead_block(c, M, LEAD_Y + i * (LEAD_H + LEAD_GAP), lead)
+        lead_block(c, M + i * (LEAD_W + 14), LEAD_Y, lead)
 
-    mw = (COLS_W - 14) // 2
     for i, major in enumerate(MAJORS):
-        major_cell(c, M + (i % 2) * (mw + 14),
-                   MAJOR_Y + (i // 2) * (MAJOR_H + MAJOR_GAP), major)
+        major_cell(c, M + (i % 4) * (MAJOR_W + 8),
+                   MAJOR_Y + (i // 4) * (MAJOR_H + MAJOR_GAP), major)
 
-    for ci in range(3):
+    # each brief takes one slot row; columns are packed by story count, not by section,
+    # so the briefs fill the page edge to edge and every column ends on the same row
+    # briefs: seven sections dealt out to four columns, tallest first, so the
+    # columns pack within a row of each other and the page fills edge to edge
+    heights = [0] * NCOL
+    place = [[] for _ in range(NCOL)]
+    for sec in sorted(blocks, key=lambda b: -len(b[4])):
+        i = heights.index(min(heights))
+        place[i].append(sec)
+        heights[i] += SEC_HEAD + SEC_PITCH * len(sec[4]) + SEC_GAP
+    for ci in range(NCOL):
         x = M + ci * (cw + gap)
+        c.rect(x, BRIEF_Y - 12, cw, 3, INK)
         y = BRIEF_Y
-        c.rect(x, y - 12, cw, 3, INK)
-        need = sum(SEC_HEAD + SEC_PITCH * len(b[4]) + SEC_GAP for b in plan[ci])
-        slack = (BRIEF_BOTTOM - 8) - BRIEF_Y - need
-        assert slack >= 0, (ci, slack)
-        nblocks = len(plan[ci])
-        # spend the leftover above the last section, so every column ends level
-        extra = [0] * nblocks
-        if nblocks > 1:
-            per, rem = divmod(slack, nblocks - 1)
-            for i in range(nblocks - 1):
-                extra[i] = per
-            extra[nblocks - 2] += rem
-        for bi, (name, colr, _need, _ord, items) in enumerate(plan[ci]):
-            c.text(name, x, y, 3, colr)
-            c.rect(x, y + 24, cw - 12, 2, colr)
+        hcol = (RED, BLUE, GREEN, PLUM)[ci]
+        for name, colr, _need, _ord, items in place[ci]:
+            c.text(name, x, y, 2, hcol)
+            c.rect(x, y + 16, cw - 18, 2, hcol)
             y += SEC_HEAD
             for it in items:
-                c.rect(x, y + 6, 6, 6, colr)
-                c.text(it, x + 12, y, 3, INK)
+                c.rect(x, y + 4, 5, 5, colr)
+                c.text(it, x + 11, y, 2, INK)
                 y += SEC_PITCH
-            y += SEC_GAP + extra[bi]
-        assert y - SEC_GAP - extra[-1] + SEC_GAP <= BRIEF_BOTTOM - 8, (ci, y)
+            y += SEC_GAP
         assert y <= BRIEF_BOTTOM + 8, (ci, y)
 
-    c.rect(M, BRIEF_BOTTOM, COLS_W, 3, INK)
-    fcols = cols_for(COLS_W, 2)
+    c.rect(M, 812, COLS_W, 3, INK)
+
+    # the footer runs in two half-page columns, tag on the line above its body
+    fgap = 16
+    fcw = (COLS_W - fgap) // 2
+    fcols = cols_for(fcw, 2)
     fblocks = [(tag, wrap(body, fcols), colr) for tag, body, colr in FOOT]
-    fh = sum(20 + 16 * len(ls) + 6 for _t, ls, _c in fblocks)
-    y = H - 9 - FOOT_PAD - fh
-    assert y >= BRIEF_BOTTOM + 10, y
-    for tag, ls, colr in fblocks:
-        c.text(tag, M, y, 2, RED)
-        for i, ln in enumerate(ls):
-            c.text(ln, M, y + 20 + i * 16, 2, colr)
-        y += 20 + 16 * len(ls) + 6
+    col = [fblocks[:2], fblocks[2:]]
+    heights = [sum(22 + 16 * len(ls) + 6 for _t, ls, _c in blk) for blk in col]
+    y = H - 12 - FOOT_PAD - max(heights)
+    assert y >= BRIEF_BOTTOM + 8, y
+    for ci, blk in enumerate(col):
+        fx = M + ci * (fcw + fgap)
+        fy = y
+        for tag, ls, colr in blk:
+            c.text(tag, fx, fy, 2, RED)
+            for i, ln in enumerate(ls):
+                c.text(ln, fx, fy + 22 + i * 16, 2, colr)
+            fy += 22 + 16 * len(ls) + 6
     c.rect(0, H - 9, W, 9, INK)
     return c
 
