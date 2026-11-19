@@ -20,9 +20,9 @@ W, H = 1024, 1024   # the competition's cap is 1024 by 1024
 M = 22
 COLS_W = W - 2 * M
 LEAD_Y, LEAD_H, LEAD_GAP = 162, 168, 6
-MAJOR_Y, MAJOR_H, MAJOR_GAP = 338, 90, 6
+MAJOR_Y, MAJOR_H, MAJOR_GAP = 338, 92, 6
 NCOL = 4                      # brief columns across the page
-BRIEF_Y, BRIEF_BOTTOM = 590, 804
+BRIEF_Y, BRIEF_BOTTOM = 596, 786
 FOOT_Y, FOOT_PAD = 1344, 10
 SEC_HEAD, SEC_PITCH, SEC_GAP = 19, 14, 3
 
@@ -535,8 +535,8 @@ def major_cell(c, x, y, major):
     c.rect(x, y, 4, MAJOR_H, colr)
     icon(c, x + 8, y + 13, 22 / 96.0)
     tx = x + 36
-    cols = cols_for(w - 36 - 8, 2)
-    c.text(tag, tx, y + 9, 2, colr)
+    cols = cols_for(w - 36 - 7 - 10, 2)      # 10 px clear of the panel's right edge
+    c.text(tag, tx, y + 8, 2, colr)
     ls = wrap(head, cols)
     n = len(ls)
     # centre the headline in what the tag and icon leave, so two-line and three-line
@@ -629,7 +629,7 @@ def build():
             y += SEC_GAP
         assert y <= BRIEF_BOTTOM + 8, (ci, y)
 
-    c.rect(M, 812, COLS_W, 3, INK)
+    c.rect(M, 796, COLS_W, 3, INK)
 
     # the footer runs in two half-page columns, tag on the line above its body
     fgap = 16
@@ -638,7 +638,7 @@ def build():
     fblocks = [(tag, wrap(body, fcols), colr) for tag, body, colr in FOOT]
     col = [fblocks[:2], fblocks[2:]]
     heights = [sum(22 + 16 * len(ls) + 6 for _t, ls, _c in blk) for blk in col]
-    y = H - 12 - FOOT_PAD - max(heights)
+    y = H - 26 - FOOT_PAD - max(heights)
     assert y >= BRIEF_BOTTOM + 8, y
     for ci, blk in enumerate(col):
         fx = M + ci * (fcw + fgap)
