@@ -2,26 +2,39 @@
 """Writes one image summing up the world news of Wednesday 18 November 2026.
 
 Standard library only, no network, deterministic: two runs write the same bytes.
-Everything is drawn from scratch with a 5x7 bitmap font and a small rasteriser.
+Layout is a newspaper front page: masthead, two leads, eight illustrated stories,
+thirty-five one-line briefs inside region columns, and a footer that names the
+date check and the sources. Nothing is fetched at run time.
+
+Everything printed here was checked against a report filed on 18 November 2026
+(see FOOT); the digest that produced the story list is kept beside this file.
 """
 
+import itertools
 import math
 import os
 import struct
 import zlib
 
-W = H = 1024
+W, H = 1024, 1536
+M = 22
+COLS_W = W - 2 * M
+LEAD_Y, LEAD_H, LEAD_GAP = 188, 150, 6
+MAJOR_Y, MAJOR_H, MAJOR_GAP = 506, 100, 6
+BRIEF_Y, BRIEF_BOTTOM = 936, 1330
+FOOT_Y, FOOT_PAD = 1344, 10
+SEC_HEAD, SEC_PITCH, SEC_GAP = 26, 24, 6
 
-BG = (9, 15, 28)
-CARD = (246, 243, 234)
-INK = (17, 24, 39)
-RED = (198, 40, 34)
-AMBER = (222, 152, 25)
-BLUE = (39, 90, 165)
-GREEN = (28, 132, 84)
-GREY = (170, 180, 196)
+PAPER = (243, 239, 228)
+PANEL = (230, 223, 208)
+INK = (26, 24, 22)
+RED = (168, 32, 28)
+BLUE = (28, 62, 120)
+GREEN = (24, 92, 60)
+AMBER = (168, 106, 12)
+GREY = (108, 103, 94)
 
-# 5 wide, 7 tall, one entry per glyph as seven rows of five cells.
+# 5 wide, 7 tall. One string per row, '#' set, '.' clear.
 FONT = {
     "A": (".###.", "#...#", "#...#", "#####", "#...#", "#...#", "#...#"),
     "B": ("####.", "#...#", "#...#", "####.", "#...#", "#...#", "####."),
@@ -36,7 +49,7 @@ FONT = {
     "K": ("#...#", "#..#.", "#.#..", "##...", "#.#..", "#..#.", "#...#"),
     "L": ("#....", "#....", "#....", "#....", "#....", "#....", "#####"),
     "M": ("#...#", "##.##", "#.#.#", "#.#.#", "#...#", "#...#", "#...#"),
-    "N": ("#...#", "##..#", "#.#.#", "#.#.#", "#..##", "#...#", "#...#"),
+    "N": ("#...#", "##..#", "###.#", "#.###", "#..##", "#...#", "#...#"),
     "O": (".###.", "#...#", "#...#", "#...#", "#...#", "#...#", ".###."),
     "P": ("####.", "#...#", "#...#", "####.", "#....", "#....", "#...."),
     "Q": (".###.", "#...#", "#...#", "#...#", "#.#.#", "#..#.", ".##.#"),
@@ -61,20 +74,50 @@ FONT = {
     "9": (".###.", "#...#", "#...#", ".####", "....#", "...#.", ".##.."),
     " ": (".....", ".....", ".....", ".....", ".....", ".....", "....."),
     ".": (".....", ".....", ".....", ".....", ".....", ".....", "..#.."),
-    "-": (".....", ".....", ".....", "#####", ".....", ".....", "....."),
     ",": (".....", ".....", ".....", ".....", ".....", "..#..", ".#..."),
     ":": (".....", "..#..", ".....", ".....", ".....", "..#..", "....."),
-    "/": ("....#", "....#", "...#.", "..#..", ".#...", "#....", "#...."),
+    "-": (".....", ".....", ".....", "#####", ".....", ".....", "....."),
     "'": ("..#..", "..#..", ".....", ".....", ".....", ".....", "....."),
+    "/": ("....#", "....#", "...#.", "..#..", ".#...", "#....", "#...."),
     "&": (".##..", "#..#.", "#.#..", ".#...", "#.#.#", "#..#.", ".##.#"),
+    "!": ("..#..", "..#..", "..#..", "..#..", "..#..", ".....", "..#.."),
+    "?": (".###.", "#...#", "....#", "...#.", "..#..", ".....", "..#.."),
+    "+": (".....", "..#..", "..#..", "#####", "..#..", "..#..", "....."),
+    "%": ("##..#", "##.#.", "...#.", "..#..", ".#...", "#..##", "#..##"),
 }
 
 for _ch, _rows in FONT.items():
     assert len(_rows) == 7 and all(len(_r) == 5 for _r in _rows), _ch
 
+ADV = 6             # glyph advance in font cells: 5 wide, 1 of air
+LEADING = 1         # blank rows between lines, in cells
+
+
+def line_h(sc):
+    return (7 + LEADING) * sc + 1
+
+
+def wrap(s, cols):
+    lines, line = [], ""
+    for word in s.split():
+        if not line:
+            line = word
+        elif len(line) + 1 + len(word) <= cols:
+            line += " " + word
+        else:
+            lines.append(line)
+            line = word
+    if line:
+        lines.append(line)
+    return lines
+
+
+def cols_for(width, sc):
+    return width // (ADV * sc)
+
 
 class Canvas:
-    """A flat RGB bytearray with the few primitives the poster needs."""
+    """Flat RGB bytearray with the primitives a front page needs."""
 
     def __init__(self, w, h, bg):
         self.w, self.h = w, h
@@ -105,12 +148,14 @@ class Canvas:
                     self.put(xx, yy, c)
 
     def ring(self, cx, cy, r, t, c):
+        inner = max(0.0, (r - t)) ** 2
+        outer = r * r
         for yy in range(max(0, int(cy - r)), min(self.h, int(cy + r) + 2)):
             dy = yy + 0.5 - cy
             for xx in range(max(0, int(cx - r)), min(self.w, int(cx + r) + 2)):
                 dx = xx + 0.5 - cx
-                d = (dx * dx + dy * dy) ** 0.5
-                if r - t < d <= r:
+                d2 = dx * dx + dy * dy
+                if inner < d2 <= outer:
                     self.put(xx, yy, c)
 
     def line(self, x0, y0, x1, y1, t, c):
@@ -118,13 +163,13 @@ class Canvas:
         L2 = dx * dx + dy * dy
         if L2 == 0:
             return
-        half = t / 2.0
+        half = max(0.5, t / 2.0) ** 2
         for yy in range(max(0, int(min(y0, y1) - t)), min(self.h, int(max(y0, y1) + t) + 1)):
             for xx in range(max(0, int(min(x0, x1) - t)), min(self.w, int(max(x0, x1) + t) + 1)):
                 u = ((xx + 0.5 - x0) * dx + (yy + 0.5 - y0) * dy) / L2
                 u = 0.0 if u < 0 else (1.0 if u > 1 else u)
                 ex, ey = x0 + u * dx, y0 + u * dy
-                if (xx + 0.5 - ex) ** 2 + (yy + 0.5 - ey) ** 2 <= half * half:
+                if (xx + 0.5 - ex) ** 2 + (yy + 0.5 - ey) ** 2 <= half:
                     self.put(xx, yy, c)
 
     def poly(self, pts, c):
@@ -142,123 +187,445 @@ class Canvas:
                 self.rect(xs[i], yy, xs[i + 1] - xs[i], 1, c)
 
     def text(self, s, x, y, sc, c):
-        cx = x
         for ch in s.upper():
-            rows = FONT[ch]
-            for ry in range(7):
-                for rx in range(5):
-                    if rows[ry][rx] == "#":
-                        self.rect(cx + rx * sc, y + ry * sc, sc, sc, c)
-            cx += 6 * sc
-        return cx
+            rows = FONT.get(ch)
+            if rows:
+                for ry in range(7):
+                    for rx in range(5):
+                        if rows[ry][rx] == "#":
+                            self.rect(x + rx * sc, y + ry * sc, sc, sc, c)
+            x += ADV * sc
 
     def text_w(self, s, sc):
-        return len(s) * 6 * sc
+        return len(s) * ADV * sc
 
     def text_c(self, s, y, sc, c):
         self.text(s, (self.w - self.text_w(s, sc)) // 2, y, sc, c)
 
-
-def wrap(s, cols):
-    lines, line = [], ""
-    for word in s.split():
-        if not line:
-            line = word
-        elif len(line) + 1 + len(word) <= cols:
-            line += " " + word
-        else:
-            lines.append(line)
-            line = word
-    if line:
-        lines.append(line)
-    return lines
+    def lines(self, s, x, y, cols, sc, c, limit=None):
+        ls = wrap(s, cols)
+        if limit:
+            ls = ls[:limit]
+        for i, ln in enumerate(ls):
+            self.text(ln, x, y + i * line_h(sc), sc, c)
+        return len(ls)
 
 
-def icon_diplomacy(c, x, y):
+# Icons are drawn in a 96x96 box scaled by u, so one description serves every
+# size the page asks for: 44px beside a major story, 84px beside a lead.
+def R(c, x, y, u, a, b, w, h, col):
+    c.rect(x + a * u, y + b * u, w * u, h * u, col)
+
+
+def D(c, x, y, u, a, b, r, col):
+    c.disc(x + a * u, y + b * u, r * u, col)
+
+
+def G(c, x, y, u, a, b, r, t, col):
+    c.ring(x + a * u, y + b * u, r * u, t * u, col)
+
+
+def L(c, x, y, u, a, b, a2, b2, t, col):
+    c.line(x + a * u, y + b * u, x + a2 * u, y + b2 * u, t * u, col)
+
+
+def P(c, x, y, u, pts, col):
+    c.poly([(x + a * u, y + b * u) for a, b in pts], col)
+
+
+def ic_summit(c, x, y, u):
+    """Three leaders at lecterns, flags above."""
     for i, col in enumerate((RED, AMBER, BLUE)):
-        px = x + 10 + i * 30
-        c.rect(px, y + 8, 5, 80, INK)
-        c.rect(px + 5, y + 8, 19, 15, col)
+        a = 6 + i * 30
+        D(c, x, y, u, a + 14, 14, 8, col)
+        R(c, x, y, u, a + 4, 26, 20, 14, col)
+        R(c, x, y, u, a, 40, 28, 4, INK)
+        R(c, x, y, u, a + 2, 44, 4, 42, INK)
+        R(c, x, y, u, a + 18, 44, 4, 42, INK)
+        R(c, x, y, u, a - 4, 86, 36, 7, INK)
 
 
-def icon_gaza(c, x, y):
-    c.rect(x + 4, y + 52, 76, 17, INK)
-    c.rect(x + 26, y + 36, 32, 16, INK)
-    c.line(x + 58, y + 42, x + 94, y + 42, 8, INK)
-    for i in range(3):
-        c.disc(x + 18 + i * 26, y + 76, 10, INK)
+def ic_missile(c, x, y, u):
+    """A missile over a struck base, drones around it."""
+    R(c, x, y, u, 4, 74, 88, 12, INK)
+    R(c, x, y, u, 12, 62, 16, 12, BLUE)
+    R(c, x, y, u, 62, 62, 22, 12, BLUE)
+    P(c, x, y, u, [(46, 4), (57, 40), (35, 40)], RED)
+    L(c, x, y, u, 46, 40, 46, 58, 5, RED)
+    L(c, x, y, u, 30, 56, 18, 44, 3, INK)
+    L(c, x, y, u, 62, 56, 74, 44, 3, INK)
+    for a in (26, 46, 66):
+        R(c, x, y, u, a, 86, 8, 6, AMBER)
 
 
-def icon_ukraine(c, x, y):
-    c.rect(x + 2, y + 56, 40, 8, INK)
-    c.rect(x + 60, y + 56, 40, 8, INK)
-    for px in (x + 12, x + 82):
-        c.rect(px, y + 28, 10, 44, INK)
-    burst = []
+def ic_tank(c, x, y, u):
+    """An armoured column: hull, turret, gun, wheels."""
+    R(c, x, y, u, 6, 56, 84, 16, INK)
+    R(c, x, y, u, 30, 38, 36, 18, INK)
+    L(c, x, y, u, 66, 44, 92, 44, 7, INK)
+    for a in (12, 30, 48, 66, 84):
+        D(c, x, y, u, a, 76, 8, INK)
+    R(c, x, y, u, 40, 30, 8, 8, AMBER)
+
+
+def ic_bridge(c, x, y, u):
+    """A span broken by a burst."""
+    R(c, x, y, u, 2, 62, 38, 8, INK)
+    R(c, x, y, u, 60, 62, 36, 8, INK)
+    R(c, x, y, u, 10, 40, 9, 30, INK)
+    R(c, x, y, u, 80, 40, 9, 30, INK)
+    R(c, x, y, u, 22, 80, 8, 6, RED)
+    R(c, x, y, u, 70, 82, 7, 5, RED)
+    pts = []
     for i in range(16):
-        a = i * math.pi / 8.0
-        rr = 22 if i % 2 == 0 else 9
-        burst.append((x + 51 + rr * math.cos(a), y + 34 + rr * math.sin(a)))
-    c.poly(burst, RED)
-    c.rect(x + 30, y + 74, 7, 6, RED)
-    c.rect(x + 66, y + 76, 6, 5, RED)
+        r = 22 if i % 2 == 0 else 9
+        a = i * math.pi / 8
+        pts.append((51 + r * math.cos(a), 34 + r * math.sin(a)))
+    P(c, x, y, u, pts, RED)
 
 
-def icon_space(c, x, y):
-    c.ring(x + 26, y + 30, 19, 5, INK)
-    c.rect(x + 38, y + 42, 30, 16, INK)
-    c.line(x + 53, y + 42, x + 53, y + 8, 4, INK)
-    c.line(x + 30, y + 58, x + 18, y + 74, 4, INK)
-    c.line(x + 48, y + 58, x + 42, y + 76, 4, INK)
-    c.ring(x + 86, y + 22, 9, 3, BLUE)
-    for dx in (66, 72):
-        c.rect(x + dx, y + 21, 3, 3, BLUE)
+def ic_coin(c, x, y, u):
+    """A loan: stacked coins beside a currency mark."""
+    for i, b in enumerate((58, 46, 34)):
+        R(c, x, y, u, 6, b, 40, 10, BLUE if i % 2 else AMBER)
+    G(c, x, y, u, 70, 44, 22, 5, BLUE)
+    L(c, x, y, u, 62, 32, 62, 56, 4, BLUE)
+    L(c, x, y, u, 55, 40, 69, 40, 3, BLUE)
+    L(c, x, y, u, 55, 50, 69, 50, 3, BLUE)
 
 
-def icon_markets(c, x, y):
-    for i, top in enumerate((16, 31, 46, 61)):
-        c.rect(x + 8 + i * 21, y + top, 14, 82 - top, RED)
-    c.line(x + 6, y + 12, x + 86, y + 64, 5, INK)
-    c.poly([(x + 88, y + 70), (x + 64, y + 64), (x + 82, y + 46)], INK)
+def ic_probe(c, x, y, u):
+    """Voyager: dish, bus, booms, Earth far behind."""
+    for i in range(3):
+        G(c, x, y, u, 26 + i, 34, 22 - i * 6, 4, INK)
+    R(c, x, y, u, 40, 48, 26, 14, INK)
+    L(c, x, y, u, 53, 48, 53, 16, 4, INK)
+    L(c, x, y, u, 40, 62, 24, 78, 3, INK)
+    L(c, x, y, u, 60, 62, 70, 80, 3, INK)
+    G(c, x, y, u, 84, 20, 9, 3, BLUE)
 
 
-def icon_climate(c, x, y):
-    cx, cy, r = x + 38, y + 50, 32
-    c.ring(cx, cy, r, 4, GREEN)
+def ic_market(c, x, y, u):
+    """A mixed session: bars and a jagged close."""
+    for i, b in enumerate((20, 34, 48, 62)):
+        R(c, x, y, u, 6 + i * 21, b, 13, 86 - b, GREY if i % 2 else INK)
+    pts = [(4, 30), (24, 46), (44, 24), (64, 40), (90, 18)]
+    for i in range(len(pts) - 1):
+        L(c, x, y, u, pts[i][0], pts[i][1], pts[i + 1][0], pts[i + 1][1], 4, RED)
+
+
+def ic_globe(c, x, y, u):
+    """A warming globe beside a smokestack."""
+    G(c, x, y, u, 38, 52, 34, 4, GREEN)
     for f in (0.5, 0.86):
-        d = r * (1 - f * f) ** 0.5
-        c.line(cx - r * f, cy - d, cx - r * f, cy + d, 3, GREEN)
-        c.line(cx + r * f, cy - d, cx + r * f, cy + d, 3, GREEN)
-    c.line(cx - r, cy, cx + r, cy, 3, GREEN)
-    c.rect(x + 78, y + 22, 11, 42, RED)
-    c.disc(x + 83, y + 72, 10, RED)
+        d = 34 * (1 - f * f) ** 0.5
+        L(c, x, y, u, 38 - 34 * f, 52 - d, 38 - 34 * f, 52 + d, 3, GREEN)
+        L(c, x, y, u, 38 + 34 * f, 52 - d, 38 + 34 * f, 52 + d, 3, GREEN)
+    L(c, x, y, u, 4, 52, 72, 52, 3, GREEN)
+    R(c, x, y, u, 80, 40, 12, 46, INK)
+    R(c, x, y, u, 78, 82, 16, 8, INK)
+    for a, b in ((86, 26), (90, 18), (84, 10)):
+        D(c, x, y, u, a, b, 5, GREY)
 
 
-STORIES = [
-    ("TRUMP MEETS XI AND PUTIN IN CHINA", RED, icon_diplomacy),
-    ("ISRAELI TANKS ENTER CENTRAL GAZA", AMBER, icon_gaza),
-    ("CRIMEAN BRIDGE STRUCK THIRD TIME", BLUE, icon_ukraine),
-    ("VOYAGER 1 REACHES ONE LIGHT-DAY", GREEN, icon_space),
-    ("S&P 500 FALLS FIFTH STRAIGHT DAY", RED, icon_markets),
-    ("COP31 DRAFT TARGETS FOSSIL FUELS", GREEN, icon_climate),
+def ic_flag(c, x, y, u):
+    """Two crossed flags over a signed page."""
+    L(c, x, y, u, 16, 6, 24, 90, 5, INK)
+    L(c, x, y, u, 80, 6, 72, 90, 5, INK)
+    R(c, x, y, u, 24, 10, 32, 6, RED)
+    R(c, x, y, u, 24, 16, 32, 6, PAPER)
+    R(c, x, y, u, 24, 22, 32, 6, RED)
+    R(c, x, y, u, 44, 10, 12, 18, BLUE)
+    P(c, x, y, u, [(64, 10), (80, 10), (72, 26)], AMBER)
+    R(c, x, y, u, 34, 76, 30, 14, INK)
+
+
+def ic_virus(c, x, y, u):
+    """An outbreak: a spiked virion with a warning cross."""
+    for i in range(16):
+        a = i * math.pi / 8
+        L(c, x, y, u, 42 + 20 * math.cos(a), 46 + 20 * math.sin(a),
+          42 + 30 * math.cos(a), 46 + 30 * math.sin(a), 3, GREEN)
+    D(c, x, y, u, 42, 46, 20, GREEN)
+    D(c, x, y, u, 36, 40, 5, PAPER)
+    D(c, x, y, u, 48, 52, 4, PAPER)
+    R(c, x, y, u, 78, 20, 8, 34, RED)
+    R(c, x, y, u, 70, 28, 24, 8, RED)
+
+
+def ic_ship(c, x, y, u):
+    """A carrier turning away: hull, island, jets, wake."""
+    P(c, x, y, u, [(4, 62), (92, 62), (82, 82), (14, 82)], INK)
+    R(c, x, y, u, 30, 50, 52, 12, INK)
+    R(c, x, y, u, 54, 30, 14, 20, INK)
+    L(c, x, y, u, 61, 30, 61, 14, 4, INK)
+    R(c, x, y, u, 20, 42, 6, 8, BLUE)
+    for a in (16, 30, 44):
+        L(c, x, y, u, a, 90, a - 8, 94, 2, GREY)
+
+
+def ic_fire(c, x, y, u):
+    """Flames over a broken roofline."""
+    P(c, x, y, u, [(46, 6), (60, 34), (54, 46), (76, 46), (70, 74), (22, 74),
+                   (18, 46), (34, 40)], RED)
+    P(c, x, y, u, [(46, 34), (52, 50), (44, 62), (36, 50)], AMBER)
+    R(c, x, y, u, 8, 82, 80, 8, INK)
+
+
+def ic_bank(c, x, y, u):
+    """A bank and a rising price line."""
+    P(c, x, y, u, [(48, 6), (92, 32), (4, 32)], INK)
+    for a in (14, 38, 62):
+        R(c, x, y, u, a, 36, 10, 40, GREY)
+    R(c, x, y, u, 4, 80, 88, 10, INK)
+    for i in range(4):
+        L(c, x, y, u, 10 + i * 24, 74 - i * 6, 10 + (i + 1) * 24, 68 - i * 8, 4, RED)
+
+
+def ic_wheat(c, x, y, u):
+    """A harvest: grain under a rain cloud."""
+    L(c, x, y, u, 46, 90, 46, 34, 5, INK)
+    for i in range(4):
+        yy = 38 + i * 13
+        L(c, x, y, u, 46, yy, 30, yy - 8, 4, AMBER)
+        L(c, x, y, u, 46, yy, 62, yy - 8, 4, AMBER)
+    D(c, x, y, u, 76, 24, 14, BLUE)
+    for a in (66, 76, 86):
+        L(c, x, y, u, a, 40, a - 4, 54, 3, BLUE)
+
+
+ICONS = (ic_summit, ic_missile, ic_tank, ic_bridge, ic_coin, ic_probe,
+         ic_market, ic_globe, ic_flag, ic_virus, ic_ship, ic_fire,
+         ic_bank, ic_wheat)
+
+LEADS = [
+    ("WORLD", "TRUMP MEETS XI AND PUTIN IN CHINA", RED, ic_summit,
+     "APEC IN SHENZHEN: TRADE, ARMS AND TWO WARS."),
+    ("GULF", "IRAN STRIKES US BASE IN KUWAIT", BLUE, ic_missile,
+     "KUWAIT BASE HIT, THREE TANKERS MINED."),
 ]
+
+MAJORS = [
+    ("GULF AND LEVANT", "ISRAEL OPENS GAZA GROUND DRIVE", AMBER, ic_tank),
+    ("EUROPE", "CRIMEAN BRIDGE PARTLY SEVERED", BLUE, ic_bridge),
+    ("EUROPE", "EU PROPOSES 45BN EURO LOAN", BLUE, ic_coin),
+    ("SCIENCE", "VOYAGER 1 ONE LIGHT-DAY OUT", GREEN, ic_probe),
+    ("ECONOMY", "NVIDIA RECORD, WALL ST MIXED", RED, ic_market),
+    ("WORLD", "OPEC DEFENDS FOSSIL FUELS", GREEN, ic_globe),
+    ("AFRICA", "CONGO EBOLA STILL EMERGENCY", GREEN, ic_virus),
+    ("ASIA", "BANGLADESH UNREST SHUTS PLANTS", RED, ic_fire),
+]
+
+SECTIONS = [
+    ("ASIA", RED, [
+        "MARCOS AT APEC",
+        "ROHINGYA RULING",
+        "KULGAM SIEGE ENDS",
+        "YUNUS HOME BURNED",
+        "DHAKA PROTESTS",
+    ]),
+    ("EUROPE", BLUE, [
+        "UK INFLATION HIGH",
+        "ITALY HATE LAW",
+        "UNICREDIT DEAL",
+        "IMAMOGLU BANNED",
+        "DUTCH ROLE ASKED",
+    ]),
+    ("GULF AND LEVANT", AMBER, [
+        "SAUDIS SEEK ARMS",
+        "YEMEN CHILD TOLL",
+        "LEBANON STRIKE",
+        "IRAN DENIES PLOT",
+        "YEMEN WAR TO 2027",
+    ]),
+    ("AFRICA", GREEN, [
+        "ETHIOPIA BUILDUP",
+        "SUDAN ICC DEMAND",
+        "SUDAN DRONE TOLL",
+        "NIGERIA 261 DEAD",
+        "EGYPT WAGE RISE",
+        "SAHEL SMUGGLING",
+    ]),
+    ("AMERICAS", AMBER, [
+        "COLOMBIA SAYS NO",
+        "HAITI GANG HOME",
+        "US LOSES MEASLES",
+        "BRAZIL BUDGET OK",
+        "KAST MEETS XI",
+        "POPE LEO IN PERU",
+        "ECUADOR US TROOPS",
+    ]),
+    ("ECONOMY", RED, [
+        "BITCOIN DOWN 14%",
+        "GOLD ONE-YEAR LOW",
+        "TSMC AI STAKES",
+        "OIL SURPLUS 2027",
+    ]),
+    ("SCIENCE", GREEN, [
+        "STARSHIP CATCH",
+        "ISLAM TOP BY 2035",
+        "CYGNUS NOV 29",
+    ]),
+]
+
+N_STORIES = len(LEADS) + len(MAJORS) + sum(len(x[2]) for x in SECTIONS)
+
+FOOT = [
+    ("SOURCES", "WIKIPEDIA CURRENT EVENTS, REUTERS, AP, BBC, PBS, NPR, CNBC, "
+                "UN NEWS, NASA, PEW, HUMAN RIGHTS WATCH", GREY),
+    ("DATE CHECK", "EVERY ITEM WAS FIRST REPORTED ON 18 NOVEMBER 2026 IN SOME "
+                   "TIME ZONE. LEFT OUT ON PURPOSE: ITEMS DATED 17 OR 19 NOVEMBER, "
+                   "AND ANY ITEM WITH NO DAY AT ALL.", GREY),
+    ("SCOPE", f"{N_STORIES} STORIES, SEVEN SECTIONS, ONE PAGE: {len(LEADS)} LEADS, "
+              f"{len(MAJORS)} DRAWN STORIES, {N_STORIES - len(LEADS) - len(MAJORS)} BRIEFS.",
+     GREY),
+]
+
+MASTHEAD = ("THE WORLD IN ONE DAY", "18 NOVEMBER 2026",
+            f"WEDNESDAY - {N_STORIES} STORIES - SEVEN SECTIONS")
+
+
+def check_glyphs():
+    out = [MASTHEAD[0], MASTHEAD[1], MASTHEAD[2]]
+    for tag, head, _c, _i, deck in LEADS:
+        out += [tag, head, deck]
+    for tag, head, _c, _i in MAJORS:
+        out.append(head)
+    for name, _c, items in SECTIONS:
+        out.append(name)
+        out += items
+    for tag, body, _c in FOOT:
+        out += [tag, body]
+    for s in out:
+        bad = set(s.upper()) - set(FONT)
+        assert not bad, (s, bad)
+
+
+def lead_block(c, x, y, lead):
+    tag, head, colr, icon, deck = lead
+    c.rect(x, y, COLS_W, LEAD_H, PANEL)
+    c.rect(x, y, COLS_W, 6, colr)
+    icon(c, x + 14, y + 34, 84 / 96.0)
+    tx = x + 116
+    cols = cols_for(COLS_W - 116 - 14, 5)
+    c.text(tag, tx, y + 16, 2, colr)
+    n = c.lines(head, tx, y + 32, cols, 5, INK)
+    assert n <= 2, (n, head)
+    dcols = cols_for(COLS_W - 28, 3)
+    dn = c.lines(deck, x + 14, y + 32 + 2 * line_h(5) + 6, dcols, 3, GREY)
+    assert dn == 1, (dn, deck)
+    assert y + 32 + 2 * line_h(5) + 6 + line_h(3) <= y + LEAD_H
+
+
+def major_cell(c, x, y, major):
+    tag, head, colr, icon = major
+    c.rect(x, y, 483, MAJOR_H, PANEL)
+    c.rect(x, y, 5, MAJOR_H, colr)
+    icon(c, x + 12, y + 30, 40 / 96.0)
+    tx = x + 58
+    cols = cols_for(483 - 58 - 10, 4)
+    c.text(tag, tx, y + 12, 2, colr)
+    n = c.lines(head, tx, y + 30, cols, 4, INK)
+    assert n <= 2, (n, head)
+    assert y + 30 + 2 * line_h(4) <= y + MAJOR_H
+
+
+def plan_columns(blocks):
+    """Split region blocks over three columns, keeping each block whole."""
+    target = BRIEF_BOTTOM - BRIEF_Y
+    best, best_key = None, None
+    for assign in itertools.product(range(3), repeat=len(blocks)):
+        totals = [0, 0, 0]
+        for b, a in zip(blocks, assign):
+            totals[a] += b[2]
+        if max(totals) > target:
+            continue
+        key = (max(totals), max(totals) - min(totals))
+        if best_key is None or key < best_key:
+            best_key, best = key, assign
+    assert best is not None, "briefs do not fit: " + str(
+        [b[2] for b in blocks]) + " target " + str(target)
+    cols = [[] for _ in range(3)]
+    for b, a in zip(blocks, assign_cols(best, blocks)):
+        cols[a].append(b)
+    for col in cols:
+        col.sort(key=lambda b: b[3])
+    return cols
+
+
+def assign_cols(assign, blocks):
+    return assign
 
 
 def build():
-    c = Canvas(W, H, BG)
-    c.text_c("18 NOVEMBER 2026", 40, 8, CARD)
-    c.rect(128, 112, 768, 5, RED)
-    c.text_c("WEDNESDAY - SIX STORIES", 132, 5, CARD)
+    check_glyphs()
+    gap = 12
+    cw = (COLS_W - 2 * gap) // 3
+    bcols = cols_for(cw - 12, 3)
+    for _name, _c, items in SECTIONS:
+        for it in items:
+            assert len(it) <= bcols, ("brief too long for one line", it, len(it), bcols)
 
-    for i, (head, col, icon) in enumerate(STORIES):
-        y = 196 + i * 134
-        c.rect(24, y, 976, 128, CARD)
-        c.rect(24, y, 12, 128, col)
-        icon(c, 60, y + 16)
-        ty = y + 22
-        for line in wrap(head, 22)[:2]:
-            c.text(line, 176, ty, 6, INK)
-            ty += 50
+    blocks = [(name, colr, SEC_HEAD + SEC_PITCH * len(items) + SEC_GAP, i, items)
+              for i, (name, colr, items) in enumerate(SECTIONS)]
+    plan = plan_columns(blocks)
+
+    c = Canvas(W, H, PAPER)
+    c.rect(0, 0, W, 9, INK)
+
+    c.text_c(MASTHEAD[0], 28, 3, GREY)
+    c.text_c(MASTHEAD[1], 56, 9, INK)
+    c.rect(M, 128, COLS_W, 3, INK)
+    c.text_c(MASTHEAD[2], 140, 4, RED)
+    c.rect(M, 176, COLS_W, 1, GREY)
+
+    for i, lead in enumerate(LEADS):
+        lead_block(c, M, LEAD_Y + i * (LEAD_H + LEAD_GAP), lead)
+
+    mw = (COLS_W - 14) // 2
+    for i, major in enumerate(MAJORS):
+        major_cell(c, M + (i % 2) * (mw + 14),
+                   MAJOR_Y + (i // 2) * (MAJOR_H + MAJOR_GAP), major)
+
+    for ci in range(3):
+        x = M + ci * (cw + gap)
+        y = BRIEF_Y
+        c.rect(x, y - 12, cw, 3, INK)
+        need = sum(SEC_HEAD + SEC_PITCH * len(b[4]) + SEC_GAP for b in plan[ci])
+        slack = (BRIEF_BOTTOM - 8) - BRIEF_Y - need
+        assert slack >= 0, (ci, slack)
+        nblocks = len(plan[ci])
+        # spend the leftover above the last section, so every column ends level
+        extra = [0] * nblocks
+        if nblocks > 1:
+            per, rem = divmod(slack, nblocks - 1)
+            for i in range(nblocks - 1):
+                extra[i] = per
+            extra[nblocks - 2] += rem
+        for bi, (name, colr, _need, _ord, items) in enumerate(plan[ci]):
+            c.text(name, x, y, 3, colr)
+            c.rect(x, y + 24, cw - 12, 2, colr)
+            y += SEC_HEAD
+            for it in items:
+                c.rect(x, y + 6, 6, 6, colr)
+                c.text(it, x + 12, y, 3, INK)
+                y += SEC_PITCH
+            y += SEC_GAP + extra[bi]
+        assert y - SEC_GAP - extra[-1] + SEC_GAP <= BRIEF_BOTTOM - 8, (ci, y)
+        assert y <= BRIEF_BOTTOM + 8, (ci, y)
+
+    c.rect(M, BRIEF_BOTTOM, COLS_W, 3, INK)
+    fcols = cols_for(COLS_W, 2)
+    fblocks = [(tag, wrap(body, fcols), colr) for tag, body, colr in FOOT]
+    fh = sum(20 + 16 * len(ls) + 6 for _t, ls, _c in fblocks)
+    y = H - 9 - FOOT_PAD - fh
+    assert y >= BRIEF_BOTTOM + 10, y
+    for tag, ls, colr in fblocks:
+        c.text(tag, M, y, 2, RED)
+        for i, ln in enumerate(ls):
+            c.text(ln, M, y + 20 + i * 16, 2, colr)
+        y += 20 + 16 * len(ls) + 6
+    c.rect(0, H - 9, W, 9, INK)
     return c
 
 
