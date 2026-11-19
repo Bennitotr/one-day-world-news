@@ -2,13 +2,11 @@
  "day": "2026-11-18",
  "weekday": "Wednesday",
  "timezone_basis": "UTC",
- "collected": "2026-11-19",
- "method": "Wikipedia current events (18 Nov 2026) for the skeleton, then each item confirmed against a report filed 18 Nov 2026 UTC by Google News RSS: title, outlet and timestamp kept below. Nothing is included that only a later date supports.",
  "counts": {
   "leads": 2,
   "majors": 8,
-  "briefs": 34,
-  "total": 44
+  "briefs": 35,
+  "total": 45
  },
  "sections": [
   "ASIA",
@@ -20,695 +18,565 @@
   "SCIENCE"
  ],
  "excluded": "Items first reported on 17 or 19 November, items with no day, sport, and market ticker noise.",
+ "method": "Wikipedia current events (18 Nov 2026) for the skeleton, then each item confirmed against a report filed 18 Nov 2026 UTC by Google News RSS: title, outlet and timestamp kept below. Nothing is included that only a later date supports.",
  "stories": [
   {
    "kind": "lead",
    "section": "WORLD",
-   "headline": "TRUMP MEETS XI AND PUTIN IN CHINA",
-   "deck": "APEC IN SHENZHEN: TRADE, ARMS AND TWO WARS.",
-   "sources": [
-    [
-     "PBS NewsHour",
-     "2026-11-18 23:55Z",
-     "Trump lands in China for trade talks and high-stakes summit with Xi and Putin"
-    ],
-    [
-     "Reuters",
-     "2026-11-18 23:05Z",
-     "Trump says historic summit with Xi, Putin already a 'win' before event"
-    ],
-    [
-     "CNBC",
-     "2026-11-18 15:41Z",
-     "I watched Trump, Xi and Putin gather in China"
-    ]
+   "sha1": "f6a08aaca949",
+   "outlets": [
+    "PBS NewsHour",
+    "Reuters",
+    "CNBC"
+   ],
+   "first_reported": [
+    "2026-11-18 23:55Z",
+    "2026-11-18 23:05Z",
+    "2026-11-18 15:41Z"
    ]
   },
   {
    "kind": "lead",
    "section": "GULF",
-   "headline": "IRAN STRIKES US BASE IN KUWAIT",
-   "deck": "KUWAIT BASE HIT, THREE TANKERS MINED.",
-   "sources": [
-    [
-     "PBS NewsHour",
-     "2026-11-19 00:36Z",
-     "Iran widens Gulf attacks by targeting U.S. air base in Kuwait and sites in Bahrain"
-    ],
-    [
-     "The Hill",
-     "2026-11-18 16:24Z",
-     "Iran attacks US air base in Kuwait"
-    ],
-    [
-     "WSJ",
-     "2026-11-18 14:56Z",
-     "Iran Attacks Kuwait and Bahrain, Further Escalating Fight Over Strait"
-    ],
-    [
-     "NewsNation",
-     "2026-11-18 22:02Z",
-     "Iran claims 3 oil tankers hit mines"
-    ]
+   "sha1": "7b73e083b2be",
+   "outlets": [
+    "PBS NewsHour",
+    "The Hill",
+    "WSJ",
+    "NewsNation"
+   ],
+   "first_reported": [
+    "2026-11-19 00:36Z",
+    "2026-11-18 16:24Z",
+    "2026-11-18 14:56Z",
+    "2026-11-18 22:02Z"
    ]
   },
   {
    "kind": "major",
    "section": "GULF AND LEVANT",
-   "headline": "ISRAEL OPENS GAZA GROUND DRIVE",
-   "sources": [
-    [
-     "Reuters",
-     "2026-11-18 20:43Z",
-     "Israel launches ground operation in central Gaza, dozens flee"
-    ],
-    [
-     "NBC News",
-     "2026-11-18 18:40Z",
-     "Israeli tanks roll into central Gaza in first ground operation since ceasefire began"
-    ]
+   "sha1": "e8944040b839",
+   "outlets": [
+    "Reuters",
+    "NBC News"
+   ],
+   "first_reported": [
+    "2026-11-18 20:43Z",
+    "2026-11-18 18:40Z"
    ]
   },
   {
    "kind": "major",
    "section": "EUROPE",
-   "headline": "CRIMEAN BRIDGE PARTLY SEVERED",
-   "sources": [
-    [
-     "WSJ",
-     "2026-11-19 03:58Z",
-     "Ukrainian Strike Severs Part of Russia's Crimean Bridge"
-    ],
-    [
-     "Kyiv Post",
-     "2026-11-19 00:36Z",
-     "Crimean Bridge Hit Again Hours Before Trump-Putin-Xi Summit"
-    ],
-    [
-     "The Guardian",
-     "2026-11-19 02:59Z",
-     "Russia asks if Netherlands has joined conflict after Crimea bridge strike"
-    ]
+   "sha1": "bf777b41eb81",
+   "outlets": [
+    "WSJ",
+    "Kyiv Post",
+    "The Guardian"
+   ],
+   "first_reported": [
+    "2026-11-19 03:58Z",
+    "2026-11-19 00:36Z",
+    "2026-11-19 02:59Z"
    ]
   },
   {
    "kind": "major",
    "section": "EUROPE",
-   "headline": "EU PROPOSES 45BN EURO LOAN",
-   "sources": [
-    [
-     "Reuters",
-     "2026-11-18 14:52Z",
-     "EU proposes 45 billion euro Ukraine loan, to be repaid after Russia pays reparations"
-    ],
-    [
-     "France 24",
-     "2026-11-18 10:42Z",
-     "EU proposes new 45 billion euro Ukraine loan to be repaid by Russia"
-    ]
+   "sha1": "f83d920202ab",
+   "outlets": [
+    "Reuters",
+    "France 24"
+   ],
+   "first_reported": [
+    "2026-11-18 14:52Z",
+    "2026-11-18 10:42Z"
    ]
   },
   {
    "kind": "major",
    "section": "SCIENCE",
-   "headline": "VOYAGER 1 ONE LIGHT-DAY OUT",
-   "sources": [
-    [
-     "EarthSky",
-     "2026-11-18 19:18Z",
-     "Voyager 1 reaches 1 light-day from Earth"
-    ],
-    [
-     "PBS NewsHour",
-     "2026-11-18 18:55Z",
-     "Voyager 1 is now a light-day from Earth"
-    ],
-    [
-     "CNN",
-     "2026-11-18 22:59Z",
-     "Voyager 1 is now one light-day from Earth"
-    ]
+   "sha1": "8fef50857ae9",
+   "outlets": [
+    "EarthSky",
+    "PBS NewsHour",
+    "CNN"
+   ],
+   "first_reported": [
+    "2026-11-18 19:18Z",
+    "2026-11-18 18:55Z",
+    "2026-11-18 22:59Z"
    ]
   },
   {
    "kind": "major",
    "section": "ECONOMY",
-   "headline": "NVIDIA RECORD, WALL ST MIXED",
-   "sources": [
-    [
-     "Reuters",
-     "2026-11-18 10:28Z",
-     "Wall Street ends mixed after Nvidia earnings, Fed minutes"
-    ],
-    [
-     "Bitcoin Foundation",
-     "2026-11-18 06:01Z",
-     "Nvidia Posts Record $116B Sales as Board Rejects Huang's Return"
-    ]
+   "sha1": "9006f8a09b1f",
+   "outlets": [
+    "Reuters",
+    "Bitcoin Foundation"
+   ],
+   "first_reported": [
+    "2026-11-18 10:28Z",
+    "2026-11-18 06:01Z"
    ]
   },
   {
    "kind": "major",
    "section": "WORLD",
-   "headline": "OPEC DEFENDS FOSSIL FUELS",
-   "sources": [
-    [
-     "Reuters",
-     "2026-11-18 16:59Z",
-     "OPEC speaks up for fossil fuels at COP31 climate talks"
-    ],
-    [
-     "Oil & Gas 360",
-     "2026-11-19 00:16Z",
-     "OPEC defends fossil fuels at COP31 as global electrification debate intensifies"
-    ]
+   "sha1": "f395d13c40b9",
+   "outlets": [
+    "Reuters",
+    "Oil & Gas 360"
+   ],
+   "first_reported": [
+    "2026-11-18 16:59Z",
+    "2026-11-19 00:16Z"
    ]
   },
   {
    "kind": "major",
    "section": "AFRICA",
-   "headline": "CONGO EBOLA STILL EMERGENCY",
-   "sources": [
-    [
-     "Anadolu Agency",
-     "2026-11-18 15:08Z",
-     "WHO says Ebola outbreak in DR Congo remains public health emergency of international concern"
-    ],
-    [
-     "Foreign Policy",
-     "2026-11-19 03:09Z",
-     "Congo's Escalating Ebola Crisis"
-    ]
+   "sha1": "cc0cdafa1cf4",
+   "outlets": [
+    "Anadolu Agency",
+    "Foreign Policy"
+   ],
+   "first_reported": [
+    "2026-11-18 15:08Z",
+    "2026-11-19 03:09Z"
    ]
   },
   {
    "kind": "major",
    "section": "ASIA",
-   "headline": "BANGLADESH UNREST SHUTS PLANTS",
-   "sources": [
-    [
-     "The Daily Star",
-     "2026-11-18 11:15Z",
-     "Thousands block Dhaka-Aricha Highway as garment workers' unrest spreads"
-    ],
-    [
-     "The Daily Star",
-     "2026-11-18 03:46Z",
-     "RMG unrest shows no sign of easing"
-    ]
+   "sha1": "69f7cca2aef2",
+   "outlets": [
+    "The Daily Star",
+    "The Daily Star"
+   ],
+   "first_reported": [
+    "2026-11-18 11:15Z",
+    "2026-11-18 03:46Z"
    ]
   },
   {
    "kind": "brief",
    "section": "ASIA",
-   "headline": "MARCOS AT APEC",
-   "sources": [
-    [
-     "Inquirer.net",
-     "2026-11-18 09:56Z",
-     "Marcos now in Shenzhen for 33rd Apec Economic Leaders Meeting"
-    ],
-    [
-     "GMA Network",
-     "2026-11-18 16:59Z",
-     "LIVE UPDATES: Marcos in China for 33rd APEC Economic Leaders' Meeting"
-    ]
+   "sha1": "73c58d3f320f",
+   "outlets": [
+    "Inquirer.net",
+    "GMA Network"
+   ],
+   "first_reported": [
+    "2026-11-18 09:56Z",
+    "2026-11-18 16:59Z"
    ]
   },
   {
    "kind": "brief",
    "section": "ASIA",
-   "headline": "ROHINGYA RULING",
-   "sources": [
-    [
-     "Al Jazeera",
-     "2026-11-18 12:37Z",
-     "ICJ to rule on Rohingya genocide case: What to expect"
-    ],
-    [
-     "The Guardian",
-     "2026-11-18 20:21Z",
-     "Fears grow that US will put Nobel-winning judge under sanctions after Myanmar genocide ruling"
-    ]
+   "sha1": "c4ae5e11b916",
+   "outlets": [
+    "Al Jazeera",
+    "The Guardian"
+   ],
+   "first_reported": [
+    "2026-11-18 12:37Z",
+    "2026-11-18 20:21Z"
    ]
   },
   {
    "kind": "brief",
    "section": "ASIA",
-   "headline": "KULGAM SIEGE ENDS",
-   "sources": [
-    [
-     "The Hindu",
-     "2026-11-18 10:10Z",
-     "Who was Lateef Bhat, LeT militant killed in Kulgam encounter"
-    ],
-    [
-     "The Indian Express",
-     "2026-11-18 21:21Z",
-     "Kashmir's last listed local terrorist killed in Kulgam gunfight"
-    ]
+   "sha1": "6216c00b1bb8",
+   "outlets": [
+    "The Hindu",
+    "The Indian Express"
+   ],
+   "first_reported": [
+    "2026-11-18 10:10Z",
+    "2026-11-18 21:21Z"
    ]
   },
   {
    "kind": "brief",
    "section": "ASIA",
-   "headline": "YUNUS HOME BURNED",
-   "sources": [
-    [
-     "Business Standard",
-     "2026-11-19 03:09Z",
-     "Muhammad Yunus's ancestral home set ablaze as violence grips Bangladesh"
-    ],
-    [
-     "Outlook India",
-     "2026-11-19 03:27Z",
-     "Fire At Muhammad Yunus's Chattogram Home As Bangladesh Tensions Rise Over Hasina's Return"
-    ]
+   "sha1": "6d500c8b604a",
+   "outlets": [
+    "Business Standard",
+    "Outlook India"
+   ],
+   "first_reported": [
+    "2026-11-19 03:09Z",
+    "2026-11-19 03:27Z"
    ]
   },
   {
    "kind": "brief",
    "section": "ASIA",
-   "headline": "DHAKA PROTESTS",
-   "sources": [
-    [
-     "Open Magazine",
-     "2026-11-18 08:21Z",
-     "Arson Attacks, Road Blockades Reported Across Bangladesh Amid Speculation Over Sheikh Hasina's Return"
-    ],
-    [
-     "Lokmat Times",
-     "2026-11-18 08:26Z",
-     "Bangladesh Sees Arson Attacks Amid Tensions Over Sheikh Hasina's Proposed Return"
-    ]
+   "sha1": "e72593601376",
+   "outlets": [
+    "Open Magazine",
+    "Lokmat Times"
+   ],
+   "first_reported": [
+    "2026-11-18 08:21Z",
+    "2026-11-18 08:26Z"
    ]
   },
   {
    "kind": "brief",
    "section": "EUROPE",
-   "headline": "UK INFLATION HIGH",
-   "sources": [
-    [
-     "Reuters",
-     "2026-11-18 07:08Z",
-     "UK inflation rises to one-year high but markets trim rate hike bets"
-    ],
-    [
-     "AP News",
-     "2026-11-18 12:52Z",
-     "UK inflation rises to year high and keeps possibility of second straight rate hike alive"
-    ]
+   "sha1": "72186048607e",
+   "outlets": [
+    "Reuters",
+    "AP News"
+   ],
+   "first_reported": [
+    "2026-11-18 07:08Z",
+    "2026-11-18 12:52Z"
    ]
   },
   {
    "kind": "brief",
    "section": "EUROPE",
-   "headline": "ITALY HATE LAW",
-   "sources": [
-    [
-     "Reuters",
-     "2026-11-18 07:14Z",
-     "Italy approves antisemitism law amid leftist opposition protests"
-    ],
-    [
-     "JTA",
-     "2026-11-18 21:46Z",
-     "Italy passes antisemitism law amid flaring debate over criticizing Israel"
-    ]
+   "sha1": "352aa3ecaace",
+   "outlets": [
+    "Reuters",
+    "JTA"
+   ],
+   "first_reported": [
+    "2026-11-18 07:14Z",
+    "2026-11-18 21:46Z"
    ]
   },
   {
    "kind": "brief",
    "section": "EUROPE",
-   "headline": "UNICREDIT DEAL",
-   "sources": [
-    [
-     "Reuters",
-     "2026-11-18 23:09Z",
-     "EXCLUSIVE: UniCredit and Germany reach broad agreement on Commerzbank takeover"
-    ]
+   "sha1": "7b800bb83a0d",
+   "outlets": [
+    "Reuters"
+   ],
+   "first_reported": [
+    "2026-11-18 23:09Z"
    ]
   },
   {
    "kind": "brief",
    "section": "EUROPE",
-   "headline": "IMAMOGLU BANNED",
-   "sources": [
-    [
-     "Bloomberg",
-     "2026-11-18 16:17Z",
-     "Turkey Slaps Main Erdogan Rival Imamoglu With Political Ban"
-    ],
-    [
-     "Balkan Insight",
-     "2026-11-18 16:12Z",
-     "Turkish Court Hands Imamoglu New Jail Term, Political Ban"
-    ]
+   "sha1": "acae3728278e",
+   "outlets": [
+    "Bloomberg",
+    "Balkan Insight"
+   ],
+   "first_reported": [
+    "2026-11-18 16:17Z",
+    "2026-11-18 16:12Z"
    ]
   },
   {
    "kind": "brief",
    "section": "EUROPE",
-   "headline": "DUTCH ROLE ASKED",
-   "sources": [
-    [
-     "The Guardian",
-     "2026-11-19 02:59Z",
-     "Ukraine war briefing: Russia asks if Netherlands has joined conflict after Crimea bridge strike"
-    ]
+   "sha1": "e8aa7c80ffa5",
+   "outlets": [
+    "The Guardian"
+   ],
+   "first_reported": [
+    "2026-11-19 02:59Z"
    ]
   },
   {
    "kind": "brief",
    "section": "GULF AND LEVANT",
-   "headline": "SAUDIS SEEK ARMS",
-   "sources": [
-    [
-     "Middle East Eye",
-     "2026-11-18 20:45Z",
-     "'Turn on the weapons spigot': Saudi Arabia asks partners for gear to deter Houthis"
-    ]
+   "sha1": "2a1acf6117d3",
+   "outlets": [
+    "Middle East Eye"
+   ],
+   "first_reported": [
+    "2026-11-18 20:45Z"
    ]
   },
   {
    "kind": "brief",
    "section": "GULF AND LEVANT",
-   "headline": "YEMEN CHILD TOLL",
-   "sources": [
-    [
-     "UN News",
-     "2026-11-18 12:01Z",
-     "Dozens more children killed in Yemen amid escalating hostilities"
-    ]
+   "sha1": "c8f018af68d2",
+   "outlets": [
+    "UN News"
+   ],
+   "first_reported": [
+    "2026-11-18 12:01Z"
    ]
   },
   {
    "kind": "brief",
    "section": "GULF AND LEVANT",
-   "headline": "LEBANON STRIKE",
-   "sources": [
-    [
-     "Middle East Eye",
-     "2026-11-18 20:13Z",
-     "Israeli air strike targets southern Lebanon's Qantara"
-    ],
-    [
-     "Al Jazeera",
-     "2026-11-18 14:56Z",
-     "Israeli forces demolish homes in southern Lebanon"
-    ]
+   "sha1": "10825867a31c",
+   "outlets": [
+    "Middle East Eye",
+    "Al Jazeera"
+   ],
+   "first_reported": [
+    "2026-11-18 20:13Z",
+    "2026-11-18 14:56Z"
    ]
   },
   {
    "kind": "brief",
    "section": "GULF AND LEVANT",
-   "headline": "IRAN DENIES PLOT",
-   "sources": [
-    [
-     "DW",
-     "2026-11-18 01:37Z",
-     "Iran dismisses CNN report of a plot to attack Washington with a 'dirty bomb'"
-    ]
+   "sha1": "290bef6d91ee",
+   "outlets": [
+    "DW"
+   ],
+   "first_reported": [
+    "2026-11-18 01:37Z"
    ]
   },
   {
    "kind": "brief",
    "section": "GULF AND LEVANT",
-   "headline": "YEMEN WAR TO 2027",
-   "sources": [
-    [
-     "The Straits Times",
-     "2026-11-18 13:15Z",
-     "Saudi Arabia preparing for war against Yemen's Houthis to last well into 2027"
-    ]
+   "sha1": "19de0df20605",
+   "outlets": [
+    "The Straits Times"
+   ],
+   "first_reported": [
+    "2026-11-18 13:15Z"
    ]
   },
   {
    "kind": "brief",
    "section": "AFRICA",
-   "headline": "ETHIOPIA BUILDUP",
-   "sources": [
-    [
-     "Reuters",
-     "2026-11-18 13:04Z",
-     "Ethiopia and Eritrea amass forces along border, heightening war fears, sources say"
-    ]
+   "sha1": "630f4e4b7440",
+   "outlets": [
+    "Reuters"
+   ],
+   "first_reported": [
+    "2026-11-18 13:04Z"
    ]
   },
   {
    "kind": "brief",
    "section": "AFRICA",
-   "headline": "SUDAN ICC DEMAND",
-   "sources": [
-    [
-     "Human Rights Watch",
-     "2026-11-18 21:52Z",
-     "Sudan: Transfer War Crimes Suspects to ICC"
-    ],
-    [
-     "Dabanga",
-     "2026-11-18 20:33Z",
-     "Sudanese civil society orgs urge action to secure arrest of ICC indictees Al Bashir, Haroun"
-    ]
+   "sha1": "7047fbca49a8",
+   "outlets": [
+    "Human Rights Watch",
+    "Dabanga"
+   ],
+   "first_reported": [
+    "2026-11-18 21:52Z",
+    "2026-11-18 20:33Z"
    ]
   },
   {
    "kind": "brief",
    "section": "AFRICA",
-   "headline": "SUDAN DRONE TOLL",
-   "sources": [
-    [
-     "UN via Big News Network",
-     "2026-11-18 09:27Z",
-     "Drone strikes cause nearly three-quarters of verified Sudan civilian deaths - UN"
-    ]
+   "sha1": "17dfe3f523eb",
+   "outlets": [
+    "UN via Big News Network"
+   ],
+   "first_reported": [
+    "2026-11-18 09:27Z"
    ]
   },
   {
    "kind": "brief",
    "section": "AFRICA",
-   "headline": "NIGERIA 261 DEAD",
-   "sources": [
-    [
-     "Sahara Reporters",
-     "2026-11-18 20:13Z",
-     "Fresh Plateau Killings: 261 Nigerians Die In Attacks"
-    ],
-    [
-     "DW",
-     "2026-11-18 13:08Z",
-     "Axe-wielding gangs and deadly attacks: Nigeria's election violence escalates ahead of 2027 election"
-    ]
+   "sha1": "5240b37cd99a",
+   "outlets": [
+    "Sahara Reporters",
+    "DW"
+   ],
+   "first_reported": [
+    "2026-11-18 20:13Z",
+    "2026-11-18 13:08Z"
    ]
   },
   {
    "kind": "brief",
    "section": "AFRICA",
-   "headline": "EGYPT WAGE RISE",
-   "sources": [
-    [
-     "The National",
-     "2026-11-18 10:23Z",
-     "Egypt raises minimum wage, but workers doubt whether it can be enforced"
-    ]
+   "sha1": "6c498727802b",
+   "outlets": [
+    "The National"
+   ],
+   "first_reported": [
+    "2026-11-18 10:23Z"
    ]
   },
   {
    "kind": "brief",
    "section": "AFRICA",
-   "headline": "SAHEL SMUGGLING",
-   "sources": [
-    [
-     "GI-TOC",
-     "2026-11-18 22:52Z",
-     "Human smuggling and trafficking in North Africa and the Sahel - 2026"
-    ]
+   "sha1": "3c53de548777",
+   "outlets": [
+    "GI-TOC"
+   ],
+   "first_reported": [
+    "2026-11-18 22:52Z"
    ]
   },
   {
    "kind": "brief",
    "section": "AMERICAS",
-   "headline": "COLOMBIA SAYS NO",
-   "sources": [
-    [
-     "The New York Times",
-     "2026-11-19 03:23Z",
-     "Colombia Rejects Joint Plan With U.S. to Target Drug Gangs"
-    ],
-    [
-     "Common Dreams",
-     "2026-11-18 21:58Z",
-     "Colombia Rejects Trump Plan to Deploy US Military on Its Soil to Target Cartels"
-    ]
+   "sha1": "3d477cfa2b64",
+   "outlets": [
+    "The New York Times",
+    "Common Dreams"
+   ],
+   "first_reported": [
+    "2026-11-19 03:23Z",
+    "2026-11-18 21:58Z"
    ]
   },
   {
    "kind": "brief",
    "section": "AMERICAS",
-   "headline": "HAITI GANG HOME",
-   "sources": [
-    [
-     "AP News",
-     "2026-11-18 19:25Z",
-     "El Salvador's president confirms and celebrates attack on home of key Haitian gang leader"
-    ],
-    [
-     "Euronews",
-     "2026-11-18 21:58Z",
-     "Bukele confirms airstrike on Haitian gang leader Jeff's luxury mansion"
-    ]
+   "sha1": "7806adb5251d",
+   "outlets": [
+    "AP News",
+    "Euronews"
+   ],
+   "first_reported": [
+    "2026-11-18 19:25Z",
+    "2026-11-18 21:58Z"
    ]
   },
   {
    "kind": "brief",
    "section": "AMERICAS",
-   "headline": "US LOSES MEASLES",
-   "sources": [
-    [
-     "The New York Times",
-     "2026-11-18 21:58Z",
-     "Democrats Assail RFK Jr. After U.S. Loses Measles Elimination Status"
-    ],
-    [
-     "TODAY.com",
-     "2026-11-18 14:35Z",
-     "The US Has Lost Its Measles Elimination Status"
-    ]
+   "sha1": "81de9a0c07b5",
+   "outlets": [
+    "The New York Times",
+    "TODAY.com"
+   ],
+   "first_reported": [
+    "2026-11-18 21:58Z",
+    "2026-11-18 14:35Z"
    ]
   },
   {
    "kind": "brief",
    "section": "AMERICAS",
-   "headline": "BRAZIL BUDGET OK",
-   "sources": [
-    [
-     "Reuters",
-     "2026-11-18 22:37Z",
-     "Brazil Senate approves fiscal package as government seeks to calm markets"
-    ]
+   "sha1": "ad56650ac43b",
+   "outlets": [
+    "Reuters"
+   ],
+   "first_reported": [
+    "2026-11-18 22:37Z"
    ]
   },
   {
    "kind": "brief",
    "section": "AMERICAS",
-   "headline": "KAST MEETS XI",
-   "sources": [
-    [
-     "Latin Times",
-     "2026-11-18 09:34Z",
-     "Kast and Xi hold their first bilateral meeting as Chile balances ties with China and Washington"
-    ]
+   "sha1": "a2ededf2aaea",
+   "outlets": [
+    "Latin Times"
+   ],
+   "first_reported": [
+    "2026-11-18 09:34Z"
    ]
   },
   {
    "kind": "brief",
    "section": "AMERICAS",
-   "headline": "POPE LEO IN PERU",
-   "sources": [
-    [
-     "Vatican News",
-     "2026-11-18 15:55Z",
-     "Pope at concluding Mass in Peru: 'Go and proclaim the true God'"
-    ]
+   "sha1": "b51013309108",
+   "outlets": [
+    "Vatican News"
+   ],
+   "first_reported": [
+    "2026-11-18 15:55Z"
    ]
   },
   {
    "kind": "brief",
    "section": "AMERICAS",
-   "headline": "ECUADOR US TROOPS",
-   "sources": [
-    [
-     "inkl",
-     "2026-11-18 14:02Z",
-     "Ecuador's Noboa Faces Constitutional Questions Over U.S. Military Presence at Taura"
-    ]
+   "sha1": "7082e9a00e6f",
+   "outlets": [
+    "inkl"
+   ],
+   "first_reported": [
+    "2026-11-18 14:02Z"
    ]
   },
   {
    "kind": "brief",
    "section": "ECONOMY",
-   "headline": "GOLD ONE-YEAR LOW",
-   "sources": [
-    [
-     "Kitco",
-     "2026-11-18 19:43Z",
-     "Gold prices remain under pressure as Fed minutes show central bank committed to cooling inflation"
-    ],
-    [
-     "CNBC",
-     "2026-11-19 03:28Z",
-     "Gold recovers from over one-year low as markets assess Fed rate outlook"
-    ]
+   "sha1": "1042900814f6",
+   "outlets": [
+    "Kitco",
+    "CNBC"
+   ],
+   "first_reported": [
+    "2026-11-18 19:43Z",
+    "2026-11-19 03:28Z"
    ]
   },
   {
    "kind": "brief",
    "section": "ECONOMY",
-   "headline": "TSMC AI STAKES",
-   "sources": [
-    [
-     "SME & Entrepreneurship Magazine",
-     "2026-11-19 03:00Z",
-     "TSMC Plans Up to NT$32.85 Bil Investment in Anthropic, OpenAI"
-    ]
+   "sha1": "b58af970de0f",
+   "outlets": [
+    "SME & Entrepreneurship Magazine"
+   ],
+   "first_reported": [
+    "2026-11-19 03:00Z"
    ]
   },
   {
    "kind": "brief",
    "section": "ECONOMY",
-   "headline": "OIL SURPLUS 2027",
-   "sources": [
-    [
-     "Inspenet",
-     "2026-11-18 19:03Z",
-     "Oil market anticipates crude oil surplus in 2027 due to increased supply"
-    ]
+   "sha1": "ee02bd79d0ed",
+   "outlets": [
+    "Inspenet"
+   ],
+   "first_reported": [
+    "2026-11-18 19:03Z"
+   ]
+  },
+  {
+   "kind": "brief",
+   "section": "ECONOMY",
+   "sha1": "0f275282a7b5",
+   "outlets": [
+    "CoinMarketCap"
+   ],
+   "first_reported": [
+    "2026-11-18 17:03Z"
    ]
   },
   {
    "kind": "brief",
    "section": "SCIENCE",
-   "headline": "STARSHIP CATCH",
-   "sources": [
-    [
-     "Central Florida Public Media",
-     "2026-11-18 12:39Z",
-     "Starship gets a catch. Vulcan misses a delivery. A tale of two rockets"
-    ],
-    [
-     "BigGo Finance",
-     "2026-11-18 14:25Z",
-     "Starship Catch Caps 24-Year Gamble"
-    ]
+   "sha1": "a2dcef7de0ef",
+   "outlets": [
+    "Central Florida Public Media",
+    "BigGo Finance"
+   ],
+   "first_reported": [
+    "2026-11-18 12:39Z",
+    "2026-11-18 14:25Z"
    ]
   },
   {
    "kind": "brief",
    "section": "SCIENCE",
-   "headline": "ISLAM TOP BY 2035",
-   "sources": [
-    [
-     "Pew Research Center",
-     "2026-11-18 14:48Z",
-     "Islam Will Soon Be the World's Largest Religion, but Christianity Will Keep Growing Too"
-    ],
-    [
-     "Axios",
-     "2026-11-19 00:19Z",
-     "Islam will overtake Christianity as world's largest religion by 2035: Pew"
-    ]
+   "sha1": "1c591209d061",
+   "outlets": [
+    "Pew Research Center",
+    "Axios"
+   ],
+   "first_reported": [
+    "2026-11-18 14:48Z",
+    "2026-11-19 00:19Z"
    ]
   },
   {
    "kind": "brief",
    "section": "SCIENCE",
-   "headline": "CYGNUS NOV 29",
-   "sources": [
-    [
-     "NASA",
-     "2026-11-18 22:22Z",
-     "NASA Sets Coverage for Northrop Grumman CRS-25 Launch, Prelaunch"
-    ]
+   "sha1": "3bf00303d5c2",
+   "outlets": [
+    "NASA"
+   ],
+   "first_reported": [
+    "2026-11-18 22:22Z"
    ]
   }
  ]

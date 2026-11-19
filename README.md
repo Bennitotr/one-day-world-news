@@ -5,14 +5,20 @@
 [![reward](https://make.fun/badge/news-image-20261118/Bennitotr/one-day-world-news/reward.svg)](https://make.fun/bounty/news-image-20261118)
 
 One 1024x1536 newspaper front page for Wednesday 18 November 2026: a masthead with the
-date, two leads, eight illustrated stories, thirty-four one-line briefs under seven
+date, two leads, eight illustrated stories, thirty-five one-line briefs under seven
 section headings, and a footer that names the sources, the date check and what was left
-out. 44 stories, one page, readable from the image alone.
+out. 45 stories, one page, readable from the image alone.
 
 `main.py` draws the whole thing with the standard library alone: a 5x7 bitmap font cut at
 five integer scales, a column wrapper, a rasteriser and a hand-rolled PNG writer. No
 network, no assets, no dependencies. Nothing is fetched at run time, so the drawing is
-fixed; `digest.json` records where each story came from and when it was filed.
+fixed; `digest.json` records where each story came from and when it was filed, and
+
+```sh
+python3 tools/digest_report.py
+```
+
+checks that the record and the page agree story for story, then prints the provenance.
 
 ## Run it
 
