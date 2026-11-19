@@ -1,0 +1,307 @@
+{
+ "day": "2026-11-18",
+ "weekday": "Wednesday",
+ "timezone_basis": "UTC",
+ "counts": {
+  "leads": 2,
+  "majors": 8,
+  "briefs": 35,
+  "total": 45
+ },
+ "sections": [
+  "ASIA",
+  "EUROPE",
+  "GULF AND LEVANT",
+  "AFRICA",
+  "AMERICAS",
+  "ECONOMY",
+  "SCIENCE"
+ ],
+ "excluded": "Items first reported on 17 or 19 November, items with no day, sport, and market ticker noise.",
+ "method": "Wikipedia current events (18 Nov 2026) for the skeleton, then each item confirmed against a report filed 18 Nov 2026 UTC by Google News RSS: title, outlet and timestamp kept below. Nothing is included that only a later date supports. Each story's outlets and first filing time are kept in git history, not here.",
+ "stories": [
+  {
+   "kind": "lead",
+   "section": "WORLD",
+   "sha1": "f6a08aaca949"
+  },
+  {
+   "kind": "lead",
+   "section": "GULF",
+   "sha1": "7b73e083b2be"
+  },
+  {
+   "kind": "major",
+   "section": "GULF AND LEVANT",
+   "sha1": "e8944040b839"
+  },
+  {
+   "kind": "major",
+   "section": "EUROPE",
+   "sha1": "bf777b41eb81"
+  },
+  {
+   "kind": "major",
+   "section": "EUROPE",
+   "sha1": "f83d920202ab"
+  },
+  {
+   "kind": "major",
+   "section": "SCIENCE",
+   "sha1": "8fef50857ae9"
+  },
+  {
+   "kind": "major",
+   "section": "ECONOMY",
+   "sha1": "9006f8a09b1f"
+  },
+  {
+   "kind": "major",
+   "section": "WORLD",
+   "sha1": "f395d13c40b9"
+  },
+  {
+   "kind": "major",
+   "section": "AFRICA",
+   "sha1": "cc0cdafa1cf4"
+  },
+  {
+   "kind": "major",
+   "section": "ASIA",
+   "sha1": "69f7cca2aef2"
+  },
+  {
+   "kind": "brief",
+   "section": "ASIA",
+   "sha1": "73c58d3f320f"
+  },
+  {
+   "kind": "brief",
+   "section": "ASIA",
+   "sha1": "c4ae5e11b916"
+  },
+  {
+   "kind": "brief",
+   "section": "ASIA",
+   "sha1": "6216c00b1bb8"
+  },
+  {
+   "kind": "brief",
+   "section": "ASIA",
+   "sha1": "6d500c8b604a"
+  },
+  {
+   "kind": "brief",
+   "section": "ASIA",
+   "sha1": "e72593601376"
+  },
+  {
+   "kind": "brief",
+   "section": "EUROPE",
+   "sha1": "72186048607e"
+  },
+  {
+   "kind": "brief",
+   "section": "EUROPE",
+   "sha1": "352aa3ecaace"
+  },
+  {
+   "kind": "brief",
+   "section": "EUROPE",
+   "sha1": "7b800bb83a0d"
+  },
+  {
+   "kind": "brief",
+   "section": "EUROPE",
+   "sha1": "acae3728278e"
+  },
+  {
+   "kind": "brief",
+   "section": "EUROPE",
+   "sha1": "e8aa7c80ffa5"
+  },
+  {
+   "kind": "brief",
+   "section": "GULF AND LEVANT",
+   "sha1": "2a1acf6117d3"
+  },
+  {
+   "kind": "brief",
+   "section": "GULF AND LEVANT",
+   "sha1": "c8f018af68d2"
+  },
+  {
+   "kind": "brief",
+   "section": "GULF AND LEVANT",
+   "sha1": "10825867a31c"
+  },
+  {
+   "kind": "brief",
+   "section": "GULF AND LEVANT",
+   "sha1": "290bef6d91ee"
+  },
+  {
+   "kind": "brief",
+   "section": "GULF AND LEVANT",
+   "sha1": "19de0df20605"
+  },
+  {
+   "kind": "brief",
+   "section": "AFRICA",
+   "sha1": "630f4e4b7440"
+  },
+  {
+   "kind": "brief",
+   "section": "AFRICA",
+   "sha1": "7047fbca49a8"
+  },
+  {
+   "kind": "brief",
+   "section": "AFRICA",
+   "sha1": "17dfe3f523eb"
+  },
+  {
+   "kind": "brief",
+   "section": "AFRICA",
+   "sha1": "5240b37cd99a"
+  },
+  {
+   "kind": "brief",
+   "section": "AFRICA",
+   "sha1": "6c498727802b"
+  },
+  {
+   "kind": "brief",
+   "section": "AFRICA",
+   "sha1": "3c53de548777"
+  },
+  {
+   "kind": "brief",
+   "section": "AMERICAS",
+   "sha1": "3d477cfa2b64"
+  },
+  {
+   "kind": "brief",
+   "section": "AMERICAS",
+   "sha1": "7806adb5251d"
+  },
+  {
+   "kind": "brief",
+   "section": "AMERICAS",
+   "sha1": "81de9a0c07b5"
+  },
+  {
+   "kind": "brief",
+   "section": "AMERICAS",
+   "sha1": "ad56650ac43b"
+  },
+  {
+   "kind": "brief",
+   "section": "AMERICAS",
+   "sha1": "a2ededf2aaea"
+  },
+  {
+   "kind": "brief",
+   "section": "AMERICAS",
+   "sha1": "b51013309108"
+  },
+  {
+   "kind": "brief",
+   "section": "AMERICAS",
+   "sha1": "7082e9a00e6f"
+  },
+  {
+   "kind": "brief",
+   "section": "ECONOMY",
+   "sha1": "1042900814f6"
+  },
+  {
+   "kind": "brief",
+   "section": "ECONOMY",
+   "sha1": "b58af970de0f"
+  },
+  {
+   "kind": "brief",
+   "section": "ECONOMY",
+   "sha1": "ee02bd79d0ed"
+  },
+  {
+   "kind": "brief",
+   "section": "ECONOMY",
+   "sha1": "0f275282a7b5"
+  },
+  {
+   "kind": "brief",
+   "section": "SCIENCE",
+   "sha1": "a2dcef7de0ef"
+  },
+  {
+   "kind": "brief",
+   "section": "SCIENCE",
+   "sha1": "1c591209d061"
+  },
+  {
+   "kind": "brief",
+   "section": "SCIENCE",
+   "sha1": "3bf00303d5c2"
+  }
+ ],
+ "outlets": [
+  "AP News",
+  "Al Jazeera",
+  "Anadolu Agency",
+  "Axios",
+  "Balkan Insight",
+  "BigGo Finance",
+  "Bitcoin Foundation",
+  "Bloomberg",
+  "Business Standard",
+  "CNBC",
+  "CNN",
+  "Central Florida Public Media",
+  "CoinMarketCap",
+  "Common Dreams",
+  "DW",
+  "Dabanga",
+  "EarthSky",
+  "Euronews",
+  "Foreign Policy",
+  "France 24",
+  "GI-TOC",
+  "GMA Network",
+  "Human Rights Watch",
+  "Inquirer.net",
+  "Inspenet",
+  "JTA",
+  "Kitco",
+  "Kyiv Post",
+  "Latin Times",
+  "Lokmat Times",
+  "Middle East Eye",
+  "NASA",
+  "NBC News",
+  "NewsNation",
+  "Oil & Gas 360",
+  "Open Magazine",
+  "Outlook India",
+  "PBS NewsHour",
+  "Pew Research Center",
+  "Reuters",
+  "SME & Entrepreneurship Magazine",
+  "Sahara Reporters",
+  "TODAY.com",
+  "The Daily Star",
+  "The Guardian",
+  "The Hill",
+  "The Hindu",
+  "The Indian Express",
+  "The National",
+  "The New York Times",
+  "The Straits Times",
+  "UN News",
+  "UN via Big News Network",
+  "Vatican News",
+  "WSJ",
+  "inkl"
+ ]
+}

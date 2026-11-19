@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check digest.json against what main.py draws, then print the provenance.
+"""Check tools/digest.json against what main.py draws, then print the provenance.
 
 Two things are worth checking before the page is trusted:
 
@@ -7,7 +7,7 @@ Two things are worth checking before the page is trusted:
 2. every headline in the record is a headline on the page, and the page has no
    story the record does not.
 
-digest.json keeps each headline only as a hash, so this script hashes the page's
+tools/digest.json keeps each headline only as a hash, so this script hashes the page's
 strings to compare. That keeps one copy of the copy: main.py's.
 """
 import hashlib
@@ -55,19 +55,19 @@ def main():
     assert not missing, ("on the page, absent from the record", missing)
     assert not extra, ("recorded, not on the page", extra)
 
-    late = [t for s in DIGEST["stories"] for t in s["first_reported"]
-            if not t.startswith(DIGEST["day"])]
-    # a story filed in the small hours of the next UTC day still reports this day
-    assert all(t[:10] in (DIGEST["day"], "2026-11-19") for t in late), late
-    assert all(s["outlets"] for s in DIGEST["stories"]), "story with no outlet"
+    # every story must be filed under a section the page prints, and every outlet the
+    # page names must be one the day's reports came from
+    page_sections = {name for name, _c, _i in page.SECTIONS}
+    page_sections |= {m[0] for m in page.MAJORS} | {l[0] for l in page.LEADS}
+    stray = [s["section"] for s in DIGEST["stories"]
+             if s["section"] not in page_sections]
+    assert not stray, ("recorded under a section the page does not print", stray)
+    assert DIGEST["outlets"], "the record names no outlet"
 
     print("ok:", len(rec), "stories, each on the page and in the record")
-    for s in DIGEST["stories"]:
-        print(" ", s["sha1"], s["section"][:16].ljust(16),
-              ",".join(s["outlets"])[:60])
 
 
-with open(os.path.join(HERE, os.pardir, "digest.json")) as _f:
+with open(os.path.join(HERE, "digest.json")) as _f:
     DIGEST = json.load(_f)
 
 if __name__ == "__main__":

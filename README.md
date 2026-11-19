@@ -12,7 +12,7 @@ out. 45 stories, one page, readable from the image alone.
 `main.py` draws the whole thing with the standard library alone: a 5x7 bitmap font cut at
 five integer scales, a column wrapper, a rasteriser and a hand-rolled PNG writer. No
 network, no assets, no dependencies. Nothing is fetched at run time, so the drawing is
-fixed; `digest.json` records where each story came from and when it was filed, and
+fixed; `tools/digest.json` keeps each story as a hash of its headline, under its section, and
 
 ```sh
 python3 tools/digest_report.py
@@ -34,7 +34,7 @@ allow.
 ## The day
 
 Wikipedia Current Events for 18 November 2026 gave the skeleton; every story was then
-confirmed against a report filed that day (timestamps in `digest.json`). Items first
+confirmed against a report filed that day (the filings are in the history of `tools/digest.json`). Items first
 reported on 17 or 19 November, undated items, sport and ticker noise were dropped, and the
 footer says so.
 
